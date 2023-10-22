@@ -5,7 +5,7 @@ import getThemeTagFromLocalStorage from "../utils/getThemeFromLS";
 import motionSettings from "../utils/motionSettings";
 
 const ThemeSwitcher = () => {
-	// initially getting a theme definer
+	// initially getting a theme definer w/ spec func
 	const [lightMode, setLightMode] = useState(getThemeTagFromLocalStorage());
 
 	// on any theme definer change we define theme via tailwind rules
@@ -27,7 +27,7 @@ const ThemeSwitcher = () => {
 
 	return (
 		<motion.button
-			whileTap={{ scale: 0.9 }}
+			whileTap={{ scale: 100, opacity: 0.65 }}
 			whileHover={{ scale: 1.1 }}
 			transition={motionSettings}
 			className="fixed bottom-4 left-4 z-50 rounded-half border-[1.5px] border-solid border-day_text p-2 text-lg text-day_text active:border-day_primary active:text-day_primary dark:border-night_text dark:text-night_text dark:active:border-night_primary dark:active:text-night_primary md:text-2xl lg:bottom-8 lg:left-8 lg:text-4xl 2xl:text-5xl"

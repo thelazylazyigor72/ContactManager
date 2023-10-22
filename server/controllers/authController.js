@@ -44,7 +44,7 @@ module.exports.Signup = async (req, res, next) => {
 		res.status(201).json({
 			success: true,
 			message: "Signed Up Successfully",
-			data: {},
+			data: { username: user.username, id: user.id },
 			errorMessage: "",
 		});
 		// call next middleware in the stack
@@ -98,7 +98,7 @@ module.exports.Login = async (req, res, next) => {
 		res.status(201).json({
 			success: true,
 			message: "Successfully authorized",
-			data: {},
+			data: { username: user.username, id: user.id },
 			errorMessage: "",
 		});
 		next();

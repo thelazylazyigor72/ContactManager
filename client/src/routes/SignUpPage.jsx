@@ -4,7 +4,7 @@ import { motion as m } from "framer-motion";
 import { useAuthContext } from "../authContext";
 import Loading from "../components/Loading";
 import motionSettings from "../utils/motionSettings";
-import { INITIAL_STATE, reducer } from "../utils/loginReducer";
+import { INITIAL_STATE, reducer } from "../utils/signupReducer";
 import PageTransitioner from "../components/PageTransitioner";
 
 // im not making react router action
@@ -12,7 +12,7 @@ import PageTransitioner from "../components/PageTransitioner";
 // component state
 // thats why i make my own submit handler
 // ?should i change submit action ??
-const LoginPage = () => {
+const SignUpPage = () => {
 	const id = useId();
 	const usernameId = `${id}-username`;
 	const passwordId = `${id}-password`;
@@ -56,7 +56,7 @@ const LoginPage = () => {
 									"Password length should be more than 8 and less than 26",
 								);
 							}
-							const response = await fetch("http://localhost:8082/api/login", {
+							const response = await fetch("http://localhost:8082/api/signup", {
 								method: "POST",
 								credentials: "include",
 								headers: {
@@ -77,7 +77,7 @@ const LoginPage = () => {
 					className="w-full rounded-xl border border-solid border-gray-50 bg-day_primary bg-opacity-50 bg-clip-padding p-4 backdrop-blur-xl backdrop-filter dark:bg-night_primary dark:bg-opacity-70 md:w-9/12 lg:w-6/12 lg:px-20 lg:py-14 2xl:w-4/12"
 				>
 					<h1 className="mb-6 text-center font-kanit text-2xl font-medium uppercase 2xl:text-3xl">
-						Login
+						Sign Up
 					</h1>
 					{state.error && (
 						<m.div
@@ -151,7 +151,7 @@ const LoginPage = () => {
 							className="mb-2 mr-2 rounded-lg border-[2px] border-solid border-day_text px-5 py-2.5 text-center font-kanit text-lg font-medium text-day_text hover:bg-night_background hover:text-night_text focus:outline-none focus:ring-4 active:bg-transparent active:text-day_text dark:hover:text-white  dark:active:text-day_text"
 							type="submit"
 						>
-							Login
+							Sign Up
 						</m.button>
 						<m.button
 							whileTap={{ scale: 0.9 }}
@@ -159,9 +159,9 @@ const LoginPage = () => {
 							transition={motionSettings}
 							className="mb-2 mr-2 rounded-lg border-[2px] border-solid border-day_text px-5 py-2.5 text-center font-kanit text-lg font-medium text-day_text hover:bg-night_background hover:text-night_text focus:outline-none focus:ring-4 active:bg-transparent active:text-day_text  dark:hover:text-white dark:active:text-day_text"
 							type="button"
-							onClick={() => navigate("/signin")}
+							onClick={() => navigate("/login")}
 						>
-							Sign In
+							Login
 						</m.button>
 						<m.button
 							whileTap={{ scale: 0.9 }}
@@ -180,4 +180,4 @@ const LoginPage = () => {
 	);
 };
 
-export default LoginPage;
+export default SignUpPage;

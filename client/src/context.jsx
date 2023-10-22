@@ -1,25 +1,7 @@
 import React, { useContext, useMemo, useReducer } from "react";
+import { INITIAL_STATE, reducer } from "./utils/appReducer";
 
 const AppContext = React.createContext();
-
-// initial state for application data
-const INITIAL_STATE = {
-	contacts: [],
-	message: "", // ? im not sure about this
-};
-
-// reducer for application data
-const reducer = (state, action) => {
-	switch (action.type) {
-		case "SET_CONTACTS":
-			return {
-				...state,
-				contacts: action.payload,
-			};
-		default:
-			throw new Error(`unknown action ${action.type}`);
-	}
-};
 
 export const AppProvider = ({ children }) => {
 	// create a state
