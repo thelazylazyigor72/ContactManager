@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { AnimatePresence, motion as m } from "framer-motion";
 import { HiBars3, HiXMark } from "react-icons/hi2";
 import { IoPersonCircleSharp, IoPersonAddSharp } from "react-icons/io5";
@@ -62,8 +62,8 @@ const Navbar = () => {
 	// nothing really special, burger menu on mobiles and navigation bar on bigger screens
 	return (
 		<m.div
-			initial={{ y: "-100%" }}
-			animate={{ y: "0" }}
+			initial={{ scale: 0 }}
+			animate={{ scale: 1 }}
 			transition={{ delay: 0.75 }}
 			className="fixed left-0 top-0 z-[100] w-full px-2 py-2 fx-between_center lg:px-20"
 		>
@@ -71,13 +71,23 @@ const Navbar = () => {
 				<IoPersonCircleSharp className="mr-1 text-4xl text-day_text dark:text-night_text" />
 				{currentUser.username}
 			</div>
-			<m.div
-				whileTap={{ scale: 0.9 }}
-				transition={motionSettings}
-				className="active:text-light_blue dark:active:text-light_blue z-[60] float-right text-4xl text-black dark:text-white 2xl:text-6xl"
+			<Link
+				to="/dashboard/contact/create"
+				state={{
+					requestURL: `http://localhost:8082/api/contact`,
+					requestMethod: "POST",
+					redirectURL: "/dashboard",
+				}}
 			>
-				<IoPersonAddSharp />
-			</m.div>
+				<m.button
+					whileTap={{ scale: 0.9 }}
+					transition={motionSettings}
+					type="button"
+					className="active:text-light_blue dark:active:text-light_blue z-[60] float-right text-4xl text-black dark:text-white 2xl:text-6xl"
+				>
+					<IoPersonAddSharp />
+				</m.button>
+			</Link>
 			<m.button
 				whileTap={{ scale: 0.9 }}
 				whileHover={{ scale: 1.1 }}

@@ -15,6 +15,10 @@ module.exports = {
 				"4xl": "2rem",
 				half: "50%",
 			},
+			boxShadow: {
+				claymorph:
+					"15px 15px 70px hsl(302deg 25% 50%), inset -10px -10px 20px hsl(302deg 25% 50% / 70%), inset 0 16px 32px hsl(302deg 25% 95%)",
+			},
 			spacing: {
 				128: "32rem",
 				144: "36rem",
@@ -34,6 +38,7 @@ module.exports = {
 				day_primary: "#72dfa6",
 				day_secondary: "#cef3e0",
 				day_accent: "#114b2d",
+				flowerly: "#cc99ca",
 			},
 		},
 		flexScheme: {

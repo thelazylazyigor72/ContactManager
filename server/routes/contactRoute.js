@@ -9,7 +9,8 @@ const mongoose = require("mongoose");
 // create contact
 router.post("/contact", userVerification, async (req, res) => {
 	const { name, phoneNumber, group } = req.body;
-
+	// todo чекать на существование нейма и номера
+	// todo делаит проверку на существование дублей номра телефона ??
 	// check if name is already taken BUT only for this exact user!
 	const existingContact = await Contact.findOne({
 		name,
@@ -80,8 +81,8 @@ router.get("/getAllContacts", userVerification, async (req, res) => {
 });
 
 // update contact
-router.put("/contact", userVerification, async (req, res) => {
-	const { id } = req.body;
+router.put("/contact/:id", userVerification, async (req, res) => {
+	const { id } = req.params;
 
 	// some validations
 	if (!id)
@@ -113,6 +114,7 @@ router.put("/contact", userVerification, async (req, res) => {
 			});
 
 		const updatedData = { ...req.body, id: undefined };
+		console.log(updatedData);
 		const result = await Contact.findByIdAndUpdate(id, updatedData, {
 			new: true,
 		});
@@ -172,7 +174,7 @@ router.delete("/delete/:id", userVerification, async (req, res) => {
 			});
 
 		const result = await Contact.deleteOne({ _id: id });
-
+		//todo нам это не нужно, нам нужно просто удалить
 		const myContacts = await Contact.find({ createdBy: req.user.id }).populate(
 			"createdBy",
 			"-password",
@@ -198,7 +200,6 @@ router.delete("/delete/:id", userVerification, async (req, res) => {
 });
 
 // get single contact
-// ? в теории этот эндпоинт не понадобится, но пусть будет
 router.get("/contact/:id", userVerification, async (req, res) => {
 	const { id } = req.params;
 

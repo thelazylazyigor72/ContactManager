@@ -10,6 +10,9 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import SignUpPage from "./routes/SignUpPage";
 import Workspace from "./routes/Workspace";
 import Dashboard, { loader as dashboardLoader } from "./routes/Dashboard";
+import Contact, { loader as contactLoader } from "./routes/Contact";
+import deleteAction from "./routes/Delete";
+import Edit, { loader as createLoader } from "./routes/Edit";
 
 // я вычленил всю логику роутера в отдельный Компонент
 // чтобы иметь возможность вызывать функции контекстов из action/loader роутера
@@ -54,9 +57,26 @@ const App = () => {
 									errorElement: <ErrorPage />,
 								},
 								{
-									path: "dashboard/edit/:id",
-									element: <Dashboard />,
-									loader: dashboardLoader,
+									path: "/dashboard/contact/:contactId",
+									element: <Contact />,
+									loader: contactLoader,
+									errorElement: <ErrorPage />,
+								},
+								{
+									path: "/dashboard/contact/:contactId/delete",
+									action: deleteAction,
+									errorElement: <ErrorPage />,
+								},
+								{
+									path: "/dashboard/contact/:contactId/edit",
+									loader: contactLoader,
+									element: <Edit />,
+									errorElement: <ErrorPage />,
+								},
+								{
+									path: "/dashboard/contact/create",
+									loader: createLoader,
+									element: <Edit />,
 									errorElement: <ErrorPage />,
 								},
 							],
