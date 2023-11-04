@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken");
 // meaning that if user isnt auth - he'll not be able to access endpoint
 module.exports.userVerification = (req, res, next) => {
 	const token = req.cookies.token;
+	// 401 if no token provided
 	if (!token) {
 		return res.status(401).json({
 			success: false,
@@ -15,13 +16,14 @@ module.exports.userVerification = (req, res, next) => {
 			errorMessage: "No token passed",
 		});
 	}
+	// verify token
 	jwt.verify(token, process.env.TOKEN_KEY, async (err, data) => {
 		if (err) {
 			return res.status(401).json({
 				success: false,
 				message: "",
 				data: {},
-				errorMessage: `Failed to authentificate, ${err.message}`,
+				errorMessage: `Failed to authentificate, ${err.message}, try to login or signup again.`,
 			});
 		} else {
 			const user = await User.findById(data.id);

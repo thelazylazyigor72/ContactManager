@@ -5,6 +5,10 @@ import "./index.css";
 import App from "./App";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
+// implemented like that
+// in case if ill need
+// authContext within
+// loader/actions
 root.render(
 	<React.StrictMode>
 		<AuthProvider>

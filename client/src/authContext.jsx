@@ -23,11 +23,13 @@ export const AuthProvider = ({ children }) => {
 		// so according to backend logic
 		// you call an endpoint to verify the token that passed in from cookies
 		// and if there's no problem - save user data
-		// ? catch logic to update somehow ?
 		try {
-			const response = await fetch("http://localhost:8082/api/verify", {
-				credentials: "include",
-			});
+			const response = await fetch(
+				`http://localhost:${process.env.REACT_APP_PORT}/api/verify`,
+				{
+					credentials: "include",
+				},
+			);
 			const data = await response.json();
 			if (data.errorMessage) throw new Error(data.errorMessage);
 			authDispatch({
@@ -36,6 +38,7 @@ export const AuthProvider = ({ children }) => {
 			});
 		} catch (error) {
 			console.log(error);
+			authDispatch({ type: "SET_UNAUTHORIZED_USER" });
 		}
 	}, []);
 
@@ -45,7 +48,6 @@ export const AuthProvider = ({ children }) => {
 	}, [removeCookie]);
 
 	useEffect(() => {
-		// ? maybe we dont need this
 		if (!cookies.token) {
 			authDispatch({ type: "SET_UNAUTHORIZED_USER" });
 		}

@@ -1,13 +1,12 @@
 import React, { useMemo } from "react";
 
+// just var to define dots :)
 export const DOTS = "...";
 
 const range = (start, end) => {
 	const length = end - start + 1;
-	/*
-        Create an array of certain length and set the elements within it from
-        start value to end value.
-    */
+	// create an array of certain len
+	// and set the elements within it
 	return Array.from({ length }, (_, idx) => idx + start);
 };
 
@@ -18,38 +17,36 @@ export const usePagination = ({
 	currentPage,
 }) => {
 	const paginationRange = useMemo(() => {
-		// Суммарное количество страниц, с округлением в большую сторону
+		// total amount of pages, to bigger int
 		const totalPageCount = Math.ceil(totalCount / pageSize);
 
-		// кол-во кнопок страниц для отображения, 5 потому что siblingCount + firstPage + lastPage + currentPage + 2*dots
+		// num of btns to display, 5 cuz of
+		// siblingCount + firstPage + lastPage + currentPage + 2*dots
 		const totalPageNumbers = siblingCount + 5;
 
-		// !Случай 1 Если число страниц меньше числа кнопок для отображения
-		// возвращаем интервал от 1 до totalPageCount
+		// !case1 - if num of pages less than num of btns
+		// return interval from 1 to totalPageCOunt
 		if (totalPageNumbers >= totalPageCount) {
 			return range(1, totalPageCount);
 		}
 
-		/*
-            Calculate left and right sibling index and make sure they are within range 1 and totalPageCount
-        */
-		// Расчет левого и правого индекса, от текущего, соседние кнопки текущей страницы
-		// оба должны быть в пределах от 1 до totalPageCount очевидно
-		// поэтому левый сравнивается с 1, а правый с Самой последней страницей дефакто
+		// calc left&right indexs from current
+		// to make sure theyre within appropriate range
 		const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
 		const rightSiblingIndex = Math.min(
 			currentPage + siblingCount,
 			totalPageCount,
 		);
 
-		// не показываем многоточие в случае когда между границой справа/слева и соседними от текущей кнопки
+		// dont show ... incase when
+		// between left/right border and neighboor of crnt btn
 		const shouldShowLeftDots = leftSiblingIndex > 2;
 		const shouldShowRightDots = rightSiblingIndex < totalPageCount - 2;
 
 		const firstPageIndex = 1;
 		const lastPageIndex = totalPageCount;
 
-		// !Второй случай: слева нет многоточия, справа есть
+		// !case2 - left has no dots,right has
 		if (!shouldShowLeftDots && shouldShowRightDots) {
 			const leftItemCount = 3 + 2 * siblingCount;
 			const leftRange = range(1, leftItemCount);
@@ -57,7 +54,7 @@ export const usePagination = ({
 			return [...leftRange, DOTS, totalPageCount];
 		}
 
-		// !Случай три: слева есть многоточие, справа нет
+		// !case3 - reverse case2
 		if (shouldShowLeftDots && !shouldShowRightDots) {
 			const rightItemCount = 3 + 2 * siblingCount;
 			const rightRange = range(
@@ -67,7 +64,7 @@ export const usePagination = ({
 			return [firstPageIndex, DOTS, ...rightRange];
 		}
 
-		// !Четвертый: и слева и справа есть многоточия
+		// !case4 left/right have dots
 		if (shouldShowLeftDots && shouldShowRightDots) {
 			const middleRange = range(leftSiblingIndex, rightSiblingIndex);
 			return [firstPageIndex, DOTS, ...middleRange, DOTS, lastPageIndex];

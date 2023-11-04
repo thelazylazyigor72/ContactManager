@@ -1,42 +1,66 @@
-import React, { useId, useEffect, useReducer } from "react";
-import { Link, useLoaderData } from "react-router-dom";
+import React, {
+	Suspense,
+	useCallback,
+	useDeferredValue,
+	useEffect,
+	useMemo,
+	useReducer,
+} from "react";
+import { Link, useLoaderData, useNavigation } from "react-router-dom";
+import Loading from "../components/Loading";
 import PageTransitioner from "../components/PageTransitioner";
 import Pagination from "../components/Pagination";
 import Person from "../components/Person";
 import getContactsGroups from "../utils/getContactsGroups";
 import { INITIAL_STATE, reducer } from "../utils/dashboardReducer";
+import Searchbar from "../components/Searchbar";
+import FilterButtons from "../components/FilterButtons";
 
 export async function loader() {
-	const response = await fetch("http://localhost:8082/api/getAllContacts", {
-		method: "GET",
-		credentials: "include",
-	});
+	const response = await fetch(
+		`http://localhost:${process.env.REACT_APP_PORT}/api/getAllContacts`,
+		{
+			method: "GET",
+			credentials: "include",
+		},
+	);
 	const data = await response.json();
-	if (data.errorMessage) throw new Error(data.errorMessage);
+	if (!data.success) throw new Error(data.errorMessage);
+	// from loaded data im calc set of groups and assign it to data
 	const groupsFilterButtons = getContactsGroups(data.data.contacts);
 	data.groupsFilterButtons = groupsFilterButtons;
 	return data;
 }
 
-// todo анимации всего
-// todo стейт страницы, стейт данных и стейт инпута может вынести в редукс ? раз уж это об одной странице все
 const Dashboard = () => {
+	const navigation = useNavigation();
+
 	// get data from loader
 	const {
 		data: { contacts },
 		groupsFilterButtons,
 	} = useLoaderData();
-	// намеренно не делаю отсчет странц устойчивым к перезагрузке страницы
+
 	const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
 
-	// assign it to state
-	useEffect(() => {
-		dispatch({ type: "SET_CONTACTS", payload: contacts });
+	// protection, just incase yn
+	// also added suspence below
+	// also just in case
+	const defferedShow = useDeferredValue(state.showedContacts);
+
+	const memoContacts = useMemo(() => {
+		return contacts;
 	}, [contacts]);
 
-	const id = useId();
-
+	// assign loader data to state
 	useEffect(() => {
+		dispatch({ type: "SET_CONTACTS", payload: memoContacts });
+	}, [memoContacts]);
+
+	// note: pointless to memo dep arr
+	useEffect(() => {
+		// calc number of contacts to show in general
+		// and assign it tot state
 		const firstPageIndex = (state.currentPage - 1) * 12;
 		const lastPageIndex = firstPageIndex + 12;
 		const contactsToShow = state?.filteredContacts?.slice(
@@ -46,6 +70,7 @@ const Dashboard = () => {
 		dispatch({ type: "SET_SHOWED_CONTACTS", payload: contactsToShow });
 	}, [state.filteredContacts, state.currentPage]);
 
+	// pointless to memoize those three
 	const handleNextPage = () => {
 		dispatch({ type: "SET_NEXT_PAGE" });
 	};
@@ -56,67 +81,76 @@ const Dashboard = () => {
 		dispatch({ type: "SET_PAGE", payload: page });
 	};
 
+	// to memoize searchbar
+	const inputHandler = useCallback(
+		(e) => {
+			dispatch({
+				type: "INPUT_CHANGE",
+				payload: {
+					key: "search",
+					value: e.target.value,
+				},
+			});
+		},
+		[dispatch],
+	);
+
+	// to memoize searchbar
+	const memoInputValue = useMemo(() => {
+		return state.search;
+	}, [state.search]);
+
+	// to memoize filterbtns
+	const filterHandler = useCallback(
+		(group) => {
+			dispatch({ type: "SET_GROUP", payload: group });
+		},
+		[dispatch],
+	);
+
+	// to memoize filterbtns
+	const memoFilterButtons = useMemo(() => {
+		return groupsFilterButtons;
+	}, [groupsFilterButtons]);
+
+	// loading case
+	if (navigation.state === "loading") {
+		return <Loading size="screen" />;
+	}
+
 	return (
 		<PageTransitioner>
-			<div className="h-full max-h-fit min-h-screen w-full p-2 pt-16 fx_col-center_center lg:h-screen lg:px-12 lg:pb-10">
-				<div className="w-9/12 fx-between_center">
-					<div className="group relative z-0 mb-6 w-full border-b  border-solid border-day_text dark:border-night_text md:w-fit lg:px-12">
-						<input
-							type="text"
-							name={id}
-							id={id}
-							value={state.search}
-							className="peer block w-full appearance-none border-0 border-b-2 border-day_text bg-transparent px-0 py-2.5 font-prompt text-sm text-day_text focus:outline-none focus:ring-0 dark:border-night_text dark:text-night_text"
-							placeholder=" "
-							onChange={(e) => {
-								dispatch({
-									type: "INPUT_CHANGE",
-									payload: {
-										key: "search",
-										value: e.target.value,
-									},
-								});
-							}}
-						/>
-						<label
-							htmlFor={id}
-							className="absolute top-3 -z-10 origin-[0] -translate-y-6 scale-75 transform font-prompt text-base text-day_text duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:left-0 peer-focus:-translate-y-6 peer-focus:scale-75 peer-focus:font-light dark:text-night_text"
-						>
-							Search contacts
-						</label>
-					</div>
-					<div className="hidden gap-x-4 md:fx-center_center">
-						{groupsFilterButtons.map((group) => {
-							return (
-								<button
-									className="border border-solid border-slate-950"
-									type="button"
-									onClick={() =>
-										dispatch({ type: "SET_GROUP", payload: group })
-									}
-								>
-									{group}
-								</button>
-							);
-						})}
-					</div>
+			<div className="h-full max-h-fit min-h-screen w-full p-2 pt-16 fx_col-center_center lg:px-12 lg:pb-10 lg:pt-16">
+				<div className="w-9/12 fx-between_center 3xl:fx-evenly_center">
+					<Searchbar inputHandler={inputHandler} inputValue={memoInputValue} />
+					<FilterButtons
+						filterHandler={filterHandler}
+						btnsArray={memoFilterButtons}
+					/>
 				</div>
-				<div className="grid h-fit w-9/12 grow-[2] grid-cols-1 items-center justify-items-center gap-4 rounded-2xl border-l border-t border-solid border-flowerly p-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-6">
-					{contacts?.length === 0
-						? "Sorry, still empty"
-						: state?.showedContacts?.map((contact) => {
+				<Suspense fallback={<Loading size="full" />}>
+					<div className="grid h-fit w-9/12 grow-[2] grid-cols-1 items-center justify-items-center gap-4 rounded-2xl border-l border-t border-solid border-day_text p-4 dark:border-night_primary md:grid-cols-2 lg:w-11/12 lg:grid-cols-3  xl:w-full xl:grid-cols-4 3xl:w-7/12 3xl:grid-cols-4">
+						{contacts?.length === 0 ? (
+							<h1 className="self-center text-center font-kanit text-4xl font-normal text-day_text dark:text-night_text">
+								Sorry, still empty
+							</h1>
+						) : (
+							defferedShow?.map((contact) => {
 								return (
 									<Link
 										key={contact["_id"]}
 										to={`/dashboard/contact/${contact["_id"]}`}
+										className="relative"
 									>
 										<Person contact={contact} />
 									</Link>
 								);
-						  })}
-				</div>
+							})
+						)}
+					</div>
+				</Suspense>
 				<Pagination
-					className="my-10 grow fx-center_center md:my-0"
+					className="my-10 grow gap-4 fx-center_center md:my-0 lg:my-10"
 					currentPage={state?.currentPage}
 					totalCount={state?.filteredContacts?.length}
 					pageSize={12}

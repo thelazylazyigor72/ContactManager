@@ -3,15 +3,9 @@ import { useNavigate, useNavigation } from "react-router-dom";
 import { motion as m } from "framer-motion";
 import { useAuthContext } from "../authContext";
 import Loading from "../components/Loading";
-import motionSettings from "../utils/motionSettings";
 import { INITIAL_STATE, reducer } from "../utils/loginReducer";
 import PageTransitioner from "../components/PageTransitioner";
 
-// im not making react router action
-// because in action i cant operate w/
-// component state
-// thats why i make my own submit handler
-// ?should i change submit action ??
 const LoginPage = () => {
 	const id = useId();
 	const usernameId = `${id}-username`;
@@ -56,14 +50,17 @@ const LoginPage = () => {
 									"Password length should be more than 8 and less than 26",
 								);
 							}
-							const response = await fetch("http://localhost:8082/api/login", {
-								method: "POST",
-								credentials: "include",
-								headers: {
-									"Content-Type": "application/json",
+							const response = await fetch(
+								`http://localhost:${process.env.REACT_APP_PORT}/api/login`,
+								{
+									method: "POST",
+									credentials: "include",
+									headers: {
+										"Content-Type": "application/json",
+									},
+									body: JSON.stringify({ username, password }),
 								},
-								body: JSON.stringify({ username, password }),
-							});
+							);
 							const data = await response.json();
 							if (!data.success) throw new Error(data.errorMessage);
 							authDispatch({
@@ -74,7 +71,7 @@ const LoginPage = () => {
 							dispatch({ type: "SET_ERROR", payload: error.message });
 						}
 					}}
-					className="w-full rounded-xl border border-solid border-gray-50 bg-day_primary bg-opacity-50 bg-clip-padding p-4 backdrop-blur-xl backdrop-filter dark:bg-night_primary dark:bg-opacity-70 md:w-9/12 lg:w-6/12 lg:px-20 lg:py-14 2xl:w-4/12"
+					className="w-full rounded-xl border border-solid border-day_accent bg-day_primary p-4 dark:bg-night_primary  md:w-9/12 lg:w-7/12 lg:px-20 lg:py-14 2xl:w-6/12"
 				>
 					<h1 className="mb-6 text-center font-kanit text-2xl font-medium uppercase 2xl:text-3xl">
 						Login
@@ -88,17 +85,17 @@ const LoginPage = () => {
 								ease: "easeInOut",
 							}}
 						>
-							<p className="mb-4 rounded-lg bg-red-600 p-1 text-center font-prompt text-lg font-medium text-day_text">
+							<p className="mb-4 rounded-lg bg-red-600 p-1 text-center font-kanit text-lg font-medium text-day_text 2xl:text-xl 3xl:text-2xl">
 								{state.errorMessage}
 							</p>
 						</m.div>
 					)}
-					<div className="group relative z-0 mb-6 w-full border-b border-solid border-day_text">
+					<div className="group relative z-0 mb-6 w-full border-b border-solid border-day_text 3xl:mb-10">
 						<input
 							type="text"
 							name={usernameId}
 							id={usernameId}
-							className="peer block w-full appearance-none border-0 border-b-2 border-day_text bg-transparent px-0 py-2.5 font-prompt text-sm text-gray-900 focus:outline-none focus:ring-0 dark:border-night_background"
+							className="peer block w-full appearance-none border-0 border-b-2 border-day_text bg-transparent px-0 py-2.5 font-prompt text-sm text-gray-900 focus:outline-none focus:ring-0 dark:border-night_background 2xl:text-xl"
 							placeholder=" "
 							value={state.username}
 							onChange={(e) => {
@@ -113,17 +110,17 @@ const LoginPage = () => {
 						/>
 						<label
 							htmlFor={usernameId}
-							className="absolute top-3 -z-10 origin-[0] -translate-y-6 scale-75 transform font-prompt text-base text-day_text duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:left-0 peer-focus:-translate-y-6 peer-focus:scale-75 peer-focus:font-light"
+							className="absolute top-3 -z-10 origin-[0] -translate-y-6 scale-75 transform font-prompt text-base text-day_text duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:left-0 peer-focus:-translate-y-6 peer-focus:scale-75 peer-focus:font-light 2xl:text-xl 3xl:text-2xl"
 						>
 							Username
 						</label>
 					</div>
-					<div className="group relative z-0 mb-6 w-full border-b border-solid border-day_text">
+					<div className="group relative z-0 mb-6 w-full border-b border-solid border-day_text 3xl:mb-10">
 						<input
 							type="password"
 							name={passwordId}
 							id={passwordId}
-							className="dark:border-night_backgroun peer block w-full appearance-none border-0 border-b-2 border-day_text bg-transparent px-0 py-2.5 font-prompt text-sm text-gray-900 focus:border-red-600 focus:outline-none focus:ring-0"
+							className="dark:border-night_backgroun peer block w-full appearance-none border-0 border-b-2 border-day_text bg-transparent px-0 py-2.5 font-prompt text-sm text-gray-900 focus:border-red-600 focus:outline-none focus:ring-0 2xl:text-xl"
 							placeholder=" "
 							value={state.password}
 							onChange={(e) => {
@@ -138,17 +135,22 @@ const LoginPage = () => {
 						/>
 						<label
 							htmlFor={passwordId}
-							className="absolute top-3 -z-10 origin-[0] -translate-y-6 scale-75 transform font-prompt text-base text-day_text duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:left-0 peer-focus:-translate-y-6 peer-focus:scale-75 peer-focus:font-light"
+							className="absolute top-3 -z-10 origin-[0] -translate-y-6 scale-75 transform font-prompt text-base text-day_text duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:left-0 peer-focus:-translate-y-6 peer-focus:scale-75 peer-focus:font-light 2xl:text-xl 3xl:text-2xl"
 						>
 							Password
 						</label>
 					</div>
-					<div className="w-full flex-wrap gap-1 fx-evenly_center">
+					<div className="w-full flex-wrap gap-4 fx-evenly_center xs:gap-1">
 						<m.button
 							whileTap={{ scale: 0.9 }}
 							whileHover={{ scale: 1.05 }}
-							transition={motionSettings}
-							className="mb-2 mr-2 rounded-lg border-[2px] border-solid border-day_text px-5 py-2.5 text-center font-kanit text-lg font-medium text-day_text hover:bg-night_background hover:text-night_text focus:outline-none focus:ring-4 active:bg-transparent active:text-day_text dark:hover:text-white  dark:active:text-day_text"
+							transition={{
+								type: "spring",
+								stiffness: 400,
+								damping: 17,
+								bounce: 1,
+							}}
+							className="mb-2 mr-2 rounded-lg border-[2px] border-solid border-day_text px-5 py-2.5 text-center font-kanit text-lg font-medium text-day_text hover:bg-night_background hover:text-night_text focus:outline-none focus:ring-4 active:bg-transparent active:text-day_text dark:hover:text-white dark:active:text-day_text 2xl:text-xl  3xl:text-2xl"
 							type="submit"
 						>
 							Login
@@ -156,20 +158,30 @@ const LoginPage = () => {
 						<m.button
 							whileTap={{ scale: 0.9 }}
 							whileHover={{ scale: 1.05 }}
-							transition={motionSettings}
-							className="mb-2 mr-2 rounded-lg border-[2px] border-solid border-day_text px-5 py-2.5 text-center font-kanit text-lg font-medium text-day_text hover:bg-night_background hover:text-night_text focus:outline-none focus:ring-4 active:bg-transparent active:text-day_text  dark:hover:text-white dark:active:text-day_text"
+							transition={{
+								type: "spring",
+								stiffness: 400,
+								damping: 17,
+								bounce: 1,
+							}}
+							className="mb-2 mr-2 rounded-lg border-[2px] border-solid border-day_text px-5 py-2.5 text-center font-kanit text-lg font-medium text-day_text hover:bg-night_background hover:text-night_text focus:outline-none focus:ring-4 active:bg-transparent active:text-day_text dark:hover:text-white dark:active:text-day_text  2xl:text-xl 3xl:text-2xl"
 							type="button"
-							onClick={() => navigate("/signin")}
+							onClick={() => navigate("/signup")}
 						>
-							Sign In
+							Sign Up
 						</m.button>
 						<m.button
 							whileTap={{ scale: 0.9 }}
 							whileHover={{ scale: 1.05 }}
-							transition={motionSettings}
-							className="mb-2 mr-2 rounded-lg border-[2px] border-solid border-day_text px-5 py-2.5 text-center font-kanit text-lg font-medium text-day_text hover:bg-night_background hover:text-night_text focus:outline-none focus:ring-4 active:bg-transparent active:text-day_text dark:hover:text-white  dark:active:text-day_text"
+							transition={{
+								type: "spring",
+								stiffness: 400,
+								damping: 17,
+								bounce: 1,
+							}}
+							className="mb-2 mr-2 rounded-lg border-[2px] border-solid border-day_text px-5 py-2.5 text-center font-kanit text-lg font-medium text-day_text hover:bg-night_background hover:text-night_text focus:outline-none focus:ring-4 active:bg-transparent active:text-day_text dark:hover:text-white dark:active:text-day_text 2xl:text-xl  3xl:text-2xl"
 							type="button"
-							onClick={() => navigate(-1)}
+							onClick={() => navigate("/")}
 						>
 							Back
 						</m.button>

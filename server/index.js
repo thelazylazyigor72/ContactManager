@@ -3,7 +3,7 @@ const express = require("express");
 // import mongoose to work with mongodb
 const mongoose = require("mongoose");
 // to use env variables
-require("dotenv").config();
+require("dotenv").config({ path: ".././.env" });
 // import our instance of a connection to mongodb
 const dbConnection = require("./db/db");
 // importing CORS module to use cors middleware (note: im not really sure that its required for my project in general but i decided to add it)
@@ -16,6 +16,9 @@ const authRouter = require("./routes/authRoute");
 const contactRouter = require("./routes/contactRoute");
 
 //!end of import section -----------------------------------------------------------------------------------------------------------
+
+// port, either 8082 or something dat we can define ourself
+const port = process.env.PORT || 8082;
 
 // create an instance of express to work with
 const app = express();
@@ -30,7 +33,7 @@ dbConnection();
 // !!! Игорь, смотри я для тестов вручную добавил фронтовский локалхост, по идее все должно быть по другому !!
 app.use(
 	cors({
-		origin: ["http://localhost:8082", "http://localhost:3000"],
+		origin: [`http://localhost:${port}`, "http://localhost:3000"],
 		methods: ["GET", "POST", "PUT", "DELETE"],
 		credentials: true,
 	}),
@@ -50,9 +53,6 @@ app.use("/api", authRouter);
 app.use("/api", contactRouter);
 
 //! end of middleware section -----------------------------------------------------------------------------------------------------------
-
-// port, either 8082 or something dat we can define ourself
-const port = process.env.PORT || 8082;
 
 // initialize server
 app.listen(port, () => console.log(`Server is working, port: ${port}`));

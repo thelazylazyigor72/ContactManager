@@ -6,7 +6,6 @@ const { createSecretToken } = require("../utils/genToken");
 const bcrypt = require("bcryptjs");
 
 // signup controller
-//
 module.exports.Signup = async (req, res, next) => {
 	try {
 		// parse request body
@@ -90,6 +89,7 @@ module.exports.Login = async (req, res, next) => {
 				errorMessage: "Invalid password or username",
 			});
 		}
+		// create token and send back positive response
 		const token = createSecretToken(user._id);
 		res.cookie("token", token, {
 			withCredentials: true,

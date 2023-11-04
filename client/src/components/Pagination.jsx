@@ -1,5 +1,10 @@
 import React from "react";
+import { motion as m } from "framer-motion";
+import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 import { usePagination, DOTS } from "../utils/usePagination";
+
+// *doesnt memoized
+// cuz its pointless
 
 const Pagination = (props) => {
 	const {
@@ -13,6 +18,7 @@ const Pagination = (props) => {
 		className,
 	} = props;
 
+	// call a custom hook
 	const paginationRange = usePagination({
 		currentPage,
 		totalCount,
@@ -25,52 +31,89 @@ const Pagination = (props) => {
 		return null;
 	}
 
+	// calc last page number
 	const lastPage = paginationRange[paginationRange.length - 1];
 	return (
-		<ul className={className}>
-			<li
+		<m.ul
+			initial={{ scale: 0 }}
+			animate={{ scale: 1 }}
+			transition={{ delay: 0.75 }}
+			className={className}
+		>
+			<m.li
+				whileTap={{ scale: 0.9 }}
+				whileHover={{ scale: 1.1 }}
+				transition={{
+					type: "spring",
+					stiffness: 1000,
+					damping: 13,
+					bounce: 1,
+				}}
 				className={currentPage === 1 ? "pointer-events-none" : ""}
 				onClick={handlePrevPage}
 			>
 				<button
 					type="button"
-					className="mr-1 bg-night_accent px-2 py-1 text-day_text"
+					className="rounded-lg border border-solid border-day_accent bg-day_primary p-1 text-2xl text-day_text hover:bg-night_accent active:bg-day_accent dark:border-night_accent"
 				>
-					L
+					<AiOutlineLeft />
 				</button>
-			</li>
-			{paginationRange.map((pageNumber) => {
+			</m.li>
+			{paginationRange.map((pageNumber, index) => {
 				if (pageNumber === DOTS) {
 					return (
-						<li className="border border-solid border-slate-900 bg-slate-400 p-1">
+						<li
+							/* eslint-disable */
+							key={index}
+							className="pointer-events-none rounded-lg bg-day_primary p-1 font-prompt font-bold text-day_text"
+						>
 							...
 						</li>
 					);
 				}
 
 				return (
-					<li
-						className={`border border-solid border-slate-900 bg-slate-400 p-1 ${
-							pageNumber === currentPage ? "text-red-700" : ""
+					<m.li
+						key={index}
+						whileTap={{ scale: 0.9 }}
+						whileHover={{ scale: 1.1 }}
+						transition={{
+							type: "spring",
+							stiffness: 1000,
+							damping: 13,
+							bounce: 1,
+						}}
+						className={`cursor-pointer rounded-lg bg-day_primary p-1 font-prompt text-lg font-bold text-day_text ${
+							pageNumber === currentPage
+								? "border-[2px] border-solid border-night_accent bg-transparent dark:text-night_text"
+								: ""
 						}`}
 						onClick={() => handleSetPage(pageNumber)}
 					>
 						{pageNumber}
-					</li>
+					</m.li>
 				);
 			})}
-			<li
+			<m.li
+				whileTap={{ scale: 0.9 }}
+				whileHover={{ scale: 1.1 }}
+				transition={{
+					type: "spring",
+					stiffness: 1000,
+					damping: 13,
+					bounce: 1,
+				}}
 				className={currentPage === lastPage ? "pointer-events-none" : ""}
 				onClick={handleNextPage}
 			>
 				<button
 					type="button"
-					className="ml-1 bg-night_accent px-2 py-1 text-day_text"
+					className="rounded-lg border border-solid border-day_accent bg-day_primary p-1 text-2xl text-day_text hover:bg-night_accent active:bg-day_accent dark:border-night_accent"
 				>
-					R
+					<AiOutlineRight />
 				</button>
-			</li>
-		</ul>
+			</m.li>
+		</m.ul>
 	);
 };
 

@@ -10,6 +10,7 @@ router.post("/signup", Signup);
 // login
 router.post("/login", Login);
 // auth tester
+// to initialy verify authentification
 router.get("/verify", userVerification, async (req, res) => {
 	return res.status(200).json({
 		success: true,

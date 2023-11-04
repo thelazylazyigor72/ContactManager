@@ -16,7 +16,6 @@ import Edit, { loader as createLoader } from "./routes/Edit";
 
 // я вычленил всю логику роутера в отдельный Компонент
 // чтобы иметь возможность вызывать функции контекстов из action/loader роутера
-// todo проверить что на детей воркспейса нельзя зайти без токена
 const App = () => {
 	const router = createBrowserRouter([
 		{
@@ -37,7 +36,7 @@ const App = () => {
 							errorElement: <ErrorPage />,
 						},
 						{
-							path: "/signin",
+							path: "/signup",
 							element: <SignUpPage />,
 							errorElement: <ErrorPage />,
 						},

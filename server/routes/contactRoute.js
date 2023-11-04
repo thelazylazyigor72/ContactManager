@@ -9,8 +9,7 @@ const mongoose = require("mongoose");
 // create contact
 router.post("/contact", userVerification, async (req, res) => {
 	const { name, phoneNumber, group } = req.body;
-	// todo чекать на существование нейма и номера
-	// todo делаит проверку на существование дублей номра телефона ??
+
 	// check if name is already taken BUT only for this exact user!
 	const existingContact = await Contact.findOne({
 		name,
@@ -114,7 +113,6 @@ router.put("/contact/:id", userVerification, async (req, res) => {
 			});
 
 		const updatedData = { ...req.body, id: undefined };
-		console.log(updatedData);
 		const result = await Contact.findByIdAndUpdate(id, updatedData, {
 			new: true,
 		});
@@ -174,19 +172,11 @@ router.delete("/delete/:id", userVerification, async (req, res) => {
 			});
 
 		const result = await Contact.deleteOne({ _id: id });
-		//todo нам это не нужно, нам нужно просто удалить
-		const myContacts = await Contact.find({ createdBy: req.user.id }).populate(
-			"createdBy",
-			"-password",
-		);
-
-		// return updated, reduced list of contacts
-		//? таким макаром я обновлю клиент-сайд стор, и заререндерю и тп u know the drill
 
 		return res.status(200).json({
 			success: true,
 			message: "",
-			data: { ...contact._doc, myContacts: myContacts.reverse() },
+			data: {},
 			errorMessage: "",
 		});
 	} catch (err) {

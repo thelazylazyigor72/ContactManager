@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { AnimatePresence, motion as m } from "framer-motion";
 import { HiBars3, HiXMark } from "react-icons/hi2";
 import { IoPersonCircleSharp, IoPersonAddSharp } from "react-icons/io5";
-import motionSettings from "../utils/motionSettings";
 import { useAuthContext } from "../authContext";
 
 const menuVariants = {
@@ -51,13 +50,14 @@ const menuElement = {
 
 // todo responsiveness
 const Navbar = () => {
+	const location = useLocation();
+	const navigate = useNavigate();
+
 	// get user data
-	const { currentUser } = useAuthContext();
+	const { currentUser, logOut } = useAuthContext();
 
 	// burger menu flag
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-	const navigate = useNavigate();
 
 	// nothing really special, burger menu on mobiles and navigation bar on bigger screens
 	return (
@@ -65,25 +65,44 @@ const Navbar = () => {
 			initial={{ scale: 0 }}
 			animate={{ scale: 1 }}
 			transition={{ delay: 0.75 }}
-			className="fixed left-0 top-0 z-[100] w-full px-2 py-2 fx-between_center lg:px-20"
+			className="fixed left-0 top-0 z-[100] w-full px-2 py-2 fx-between_center lg:px-20 3xl:px-64"
 		>
-			<div className="hidden font-kanit text-xl uppercase text-day_text  dark:text-night_text md:fx-center_center 2xl:text-4xl">
+			<m.button
+				whileTap={{ scale: 0.9 }}
+				whileHover={{ scale: 1.05 }}
+				transition={{
+					type: "spring",
+					stiffness: 400,
+					damping: 17,
+					bounce: 1,
+				}}
+				type="button"
+				onClick={() => navigate("/dashboard")}
+				className="hidden font-kanit text-xl uppercase text-day_text  dark:text-night_text md:fx-center_center 2xl:text-2xl"
+			>
 				<IoPersonCircleSharp className="mr-1 text-4xl text-day_text dark:text-night_text" />
 				{currentUser.username}
-			</div>
+			</m.button>
 			<Link
 				to="/dashboard/contact/create"
 				state={{
-					requestURL: `http://localhost:8082/api/contact`,
+					requestURL: `http://localhost:${process.env.REACT_APP_PORT}/api/contact`,
 					requestMethod: "POST",
 					redirectURL: "/dashboard",
 				}}
 			>
 				<m.button
 					whileTap={{ scale: 0.9 }}
-					transition={motionSettings}
+					whileHover={{ scale: 1.05 }}
+					transition={{
+						type: "spring",
+						stiffness: 400,
+						damping: 17,
+						bounce: 1,
+					}}
 					type="button"
-					className="active:text-light_blue dark:active:text-light_blue z-[60] float-right text-4xl text-black dark:text-white 2xl:text-6xl"
+					disabled={location.pathname.includes("edit") ? true : false}
+					className="z-[60] float-right  text-4xl text-day_text hover:text-night_accent active:text-day_accent disabled:text-slate-500 dark:text-night_text dark:disabled:text-slate-500 2xl:text-4xl"
 				>
 					<IoPersonAddSharp />
 				</m.button>
@@ -91,7 +110,7 @@ const Navbar = () => {
 			<m.button
 				whileTap={{ scale: 0.9 }}
 				whileHover={{ scale: 1.1 }}
-				className="hidden rounded-lg bg-day_primary px-6 py-1 font-kanit text-lg uppercase md:block 2xl:text-4xl"
+				className="hidden rounded-lg border border-solid border-day_text bg-day_primary px-6 py-1 font-kanit text-lg uppercase hover:bg-night_accent active:bg-day_accent md:block 2xl:text-2xl"
 				type="button"
 				onClick={() => navigate("/")}
 			>
@@ -100,8 +119,9 @@ const Navbar = () => {
 			<m.button
 				whileTap={{ scale: 0.9 }}
 				whileHover={{ scale: 1.1 }}
-				className="hidden rounded-lg bg-day_primary px-6 py-1 font-kanit text-lg uppercase md:block 2xl:text-4xl"
+				className="hidden rounded-lg border border-solid border-day_text bg-day_primary px-6 py-1 font-kanit text-lg uppercase hover:bg-night_accent active:bg-day_accent md:block 2xl:text-2xl"
 				type="button"
+				onClick={() => logOut()}
 			>
 				logout
 			</m.button>
@@ -151,7 +171,7 @@ const Navbar = () => {
 			</AnimatePresence>
 			<m.button
 				whileTap={{ scale: 0.9 }}
-				transition={motionSettings}
+				transition={{ type: "spring", stiffness: 400, damping: 17, bounce: 1 }}
 				type="button"
 				className="active:text-light_blue dark:active:text-light_blue z-[60] float-right text-5xl text-black dark:text-white md:hidden 2xl:text-7xl"
 			>

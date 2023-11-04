@@ -18,6 +18,8 @@ module.exports = {
 			boxShadow: {
 				claymorph:
 					"15px 15px 70px hsl(302deg 25% 50%), inset -10px -10px 20px hsl(302deg 25% 50% / 70%), inset 0 16px 32px hsl(302deg 25% 95%)",
+				greenmorph:
+					"15px 15px 70px #2dc878, inset -10px -10px 20px #72dfa6, inset 0 16px 32px #2dc878",
 			},
 			spacing: {
 				128: "32rem",
